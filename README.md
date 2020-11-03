@@ -1,1 +1,3 @@
 # incremental-clustering
+
+**Text Hashing**
