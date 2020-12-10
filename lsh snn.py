@@ -6,8 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.datasets import fetch_20newsgroups
 from sklearn import random_projection
 import mmh3
-from zipfile import ZipFile
-
+from zipfile import ZipFilex
 
 file_name = "eswa-paper-text-data.zip"
 
@@ -18,19 +17,15 @@ data='text-data/DOE_out.dat'
 def get_Tokens(x):
     vectorizer = CountVectorizer(analyzer="word",ngram_range=(1,1))
     return (vectorizer.fit_transform(x).toarray(), vectorizer.get_feature_names())
-
-
 def Jaccard(X,Y):
     a=0
     for i in range(0,len(X)):
         if X[i]==Y[i] and X[i]==1:
             a+=1
     return (a/len(X))
-
 def Extract(lst,a):
     return [item[a] for item in lst]
-
-def signature(X,n,seed=8):
+def signature(X,n,seed=10):
     np.random.seed(seed)
     k=1
     p=[]
@@ -47,14 +42,12 @@ def signature(X,n,seed=8):
     for i in range(0, len(z[0])):
         c[i] = Extract(z, i)
     return c
-
 def sim(x,y):
     a=0
     for i in range(0,len(x)):
         if x[i]==y[i]:
             a+=1
     return a/len(x)
-
 def firma(x):
     transformer = random_projection.SparseRandomProjection(n_components=10)
     return transformer.fit_transform(x)
@@ -85,6 +78,7 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
     return X.todense()
 X=sparseMatFromCluto(data)
 X.shape
+
 if __name__ == '__main__':
     random.seed(10)
     newsgroups_train = fetch_20newsgroups(subset='train',
@@ -118,7 +112,6 @@ if __name__ == '__main__':
     #m_new = firma(m)
 
     m_new2 = m.dot(rndVecs) # projected matrix
-    collision = np.zeros((m.shape[0], m.shape[0]), dtype=np.int)
     # Indexing text collection
     for doc_id in range(m_new2.shape[0]):
         docSgt = np.array(m_new2[doc_id, :] >= 0, dtype=np.int)
@@ -130,11 +123,41 @@ if __name__ == '__main__':
             if docHashVal not in hshTbl_blk:
                 hshTbl_blk[docHashVal] = set()
             hshTbl_blk[docHashVal].add(doc_id + 1)
-            for e in hshTbl_blk:
-                for i in hshTbl_blk[e]:
-                    for o in hshTbl_blk[e]:
-                        collision[i - 1][o - 1] += 1
+    collision = np.zeros((m.shape[0], m.shape[0]), dtype=np.int)
+    for hshTbl_blk in HshTabls:
+        for e in hshTbl_blk:
+            for i in hshTbl_blk[e]:
+                for o in hshTbl_blk[e]:
+                    collision[i - 1][o - 1] += 1
     print("End!")
-collision[0]
-a=signature(m,6)
-y=np.array(m_new2[:]>=0,dtype=np.int)
+
+def nmatrix(x):
+    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+
+
+def boolean(x):
+    random.seed(10)
+    bool = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+    for e in range(x.shape[0]):
+        bool[e] = (np.array(x[e, :] >= 0, dtype=np.int8))
+        for i in range(len(bool[e])):
+            if (bool[e][i] != 1):
+                bool[e][i] = -1
+    return bool
+b=boolean(rndVecs)
+def hashvec(x,h,m):
+    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+    hv=np.zeros((x.shape[0],x.shape[1]),dtype=np.int)
+    for i in range(hv.shape[0]):
+        for e in range(hv.shape[1]):
+                hv[i][e]=h[x[i][e]][i]
+                n[i][e]=m[i][x[i][e]]
+    return hv,n
+h,DOC=hashvec(j,b,m)
+h=h.transpose()
+h.shape
+inner=np.dot(DOC,h)
+inner
+hcode=boolean(inner)
+hcode
+DOC
