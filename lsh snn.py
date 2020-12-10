@@ -8,23 +8,20 @@ from sklearn import random_projection
 import mmh3
 from zipfile import ZipFilex
 
-file_name = "eswa-paper-text-data.zip"
-
-with ZipFile(file_name, 'r') as zip:
-    zip.printdir()
-    data=zip.read('text-data/DOE_out.dat')
-data='text-data/DOE_out.dat'
 def get_Tokens(x):
     vectorizer = CountVectorizer(analyzer="word",ngram_range=(1,1))
     return (vectorizer.fit_transform(x).toarray(), vectorizer.get_feature_names())
+
 def Jaccard(X,Y):
     a=0
     for i in range(0,len(X)):
         if X[i]==Y[i] and X[i]==1:
             a+=1
     return (a/len(X))
+
 def Extract(lst,a):
     return [item[a] for item in lst]
+
 def signature(X,n,seed=10):
     np.random.seed(seed)
     k=1
@@ -42,15 +39,18 @@ def signature(X,n,seed=10):
     for i in range(0, len(z[0])):
         c[i] = Extract(z, i)
     return c
+
 def sim(x,y):
     a=0
     for i in range(0,len(x)):
         if x[i]==y[i]:
             a+=1
     return a/len(x)
+
 def firma(x):
     transformer = random_projection.SparseRandomProjection(n_components=10)
     return transformer.fit_transform(x)
+
 def sparseMatFromCluto(inputfile, sparseFmt = False):
     from scipy.sparse import csr_matrix, lil_matrix, coo_matrix
     import numpy as np
@@ -76,10 +76,37 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
         return csr_matrix(X)
     #np.savetxt(csv_fname, X.todense(), delimiter=" ")
     return X.todense()
-X=sparseMatFromCluto(data)
-X.shape
 
-if __name__ == '__main__':
+
+
+
+def nmatrix(x):
+    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+
+
+def boolean(x):
+    random.seed(10)
+    bool = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+    for e in range(x.shape[0]):
+        bool[e] = (np.array(x[e, :] >= 0, dtype=np.int8))
+        for i in range(len(bool[e])):
+            if (bool[e][i] != 1):
+                bool[e][i] = -1
+    return bool
+
+
+def hashvec(x,h,m):
+    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
+    hv=np.zeros((x.shape[0],x.shape[1]),dtype=np.int)
+    for i in range(hv.shape[0]):
+        for e in range(hv.shape[1]):
+                hv[i][e]=h[x[i][e]][i]
+                n[i][e]=m[i][x[i][e]]
+    return hv,n
+
+
+
+if __name__ == '__main__2':
     random.seed(10)
     newsgroups_train = fetch_20newsgroups(subset='train',
                                          remove=('headers', 'footers', 'quotes'),
@@ -131,33 +158,24 @@ if __name__ == '__main__':
                     collision[i - 1][o - 1] += 1
     print("End!")
 
-def nmatrix(x):
-    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
 
+if __name__ == '__main__':    
+    file_name = "eswa-paper-text-data.zip"
 
-def boolean(x):
-    random.seed(10)
-    bool = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
-    for e in range(x.shape[0]):
-        bool[e] = (np.array(x[e, :] >= 0, dtype=np.int8))
-        for i in range(len(bool[e])):
-            if (bool[e][i] != 1):
-                bool[e][i] = -1
-    return bool
-b=boolean(rndVecs)
-def hashvec(x,h,m):
-    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
-    hv=np.zeros((x.shape[0],x.shape[1]),dtype=np.int)
-    for i in range(hv.shape[0]):
-        for e in range(hv.shape[1]):
-                hv[i][e]=h[x[i][e]][i]
-                n[i][e]=m[i][x[i][e]]
-    return hv,n
-h,DOC=hashvec(j,b,m)
-h=h.transpose()
-h.shape
-inner=np.dot(DOC,h)
-inner
-hcode=boolean(inner)
-hcode
-DOC
+    with ZipFile(file_name, 'r') as zip:
+        zip.printdir()
+        data=zip.read('text-data/DOE_out.dat')
+    data='text-data/DOE_out.dat'
+
+    X=sparseMatFromCluto(data)
+    X.shape
+
+    b=boolean(rndVecs)
+    h,DOC=hashvec(j,b,m)
+    h=h.transpose()
+    h.shape
+    inner=np.dot(DOC,h)
+    inner
+    hcode=boolean(inner)
+    hcode
+    DOC
