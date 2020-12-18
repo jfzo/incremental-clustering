@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.datasets import fetch_20newsgroups
 from sklearn import random_projection
 import mmh3
-from zipfile import ZipFilex
+from zipfile import ZipFile
 
 def get_Tokens(x):
     vectorizer = CountVectorizer(analyzer="word",ngram_range=(1,1))
@@ -77,15 +77,7 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
     #np.savetxt(csv_fname, X.todense(), delimiter=" ")
     return X.todense()
 
-
-
-
-def nmatrix(x):
-    n = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
-
-
 def boolean(x):
-    random.seed(10)
     bool = np.zeros((x.shape[0], x.shape[1]), dtype=np.int)
     for e in range(x.shape[0]):
         bool[e] = (np.array(x[e, :] >= 0, dtype=np.int8))
@@ -103,10 +95,26 @@ def hashvec(x,h,m):
                 hv[i][e]=h[x[i][e]][i]
                 n[i][e]=m[i][x[i][e]]
     return hv,n
+def penalizedHcc(X):
+    hash_code=boolean(X)
+    suma=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)
+    pl=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)#penalized hamming(Ci,Cj,Yl)
+    pnl=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)#penalized hamming(Ci,Cj)
+    for i in range(X.shape[0]):
+        for e in range(X.shape[0]):
+            if i!=e:
+                delta=0
+                if hash_code[i][i]!=hash_code[i][e]:
+                    pl[i][e]=(1-delta)*(abs(X[i][i])+abs(X[i][e]))
+                else:
+                    delta=1
+                    pl[i][e] = (1 - delta) * (abs(X[i][i]) + abs(X[i][e]))
+
+                suma[i][e]=(abs(X[i][i]) + abs(X[i][e]))+(abs(X[e][i]) + abs(X[e][e]))
+    return pl,suma
 
 
-
-if __name__ == '__main__2':
+if __name__ == '__main__':
     random.seed(10)
     newsgroups_train = fetch_20newsgroups(subset='train',
                                          remove=('headers', 'footers', 'quotes'),
@@ -156,10 +164,12 @@ if __name__ == '__main__2':
             for i in hshTbl_blk[e]:
                 for o in hshTbl_blk[e]:
                     collision[i - 1][o - 1] += 1
+    hamming = np.cos((np.pi / 2) * (1 - collision * 1 / 60))
+    pldHaming,suma=penalizedHcc(m_new2)
     print("End!")
 
 
-if __name__ == '__main__':    
+if __name__ == '__main__2':
     file_name = "eswa-paper-text-data.zip"
 
     with ZipFile(file_name, 'r') as zip:
