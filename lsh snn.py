@@ -96,23 +96,16 @@ def hashvec(x,h,m):
                 n[i][e]=m[i][x[i][e]]
     return hv,n
 def penalizedHcc(X):
-    hash_code=boolean(X)
-    suma=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)
-    pl=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)#penalized hamming(Ci,Cj,Yl)
-    pnl=np.zeros((X.shape[0], X.shape[0]), dtype=np.int)#penalized hamming(Ci,Cj)
-    for i in range(X.shape[0]):
-        for e in range(X.shape[0]):
-            if i!=e:
-                delta=0
-                if hash_code[i][i]!=hash_code[i][e]:
-                    pl[i][e]=(1-delta)*(abs(X[i][i])+abs(X[i][e]))
-                else:
-                    delta=1
-                    pl[i][e] = (1 - delta) * (abs(X[i][i]) + abs(X[i][e]))
-
-                suma[i][e]=(abs(X[i][i]) + abs(X[i][e]))+(abs(X[e][i]) + abs(X[e][e]))
-    return pl,suma
-
+    hash_code=np.sign(X)
+    pnl=np.zeros((X.shape[0], X.shape[0]))#penalized hamming(Ci,Cj)
+    for i in range(X.shape[0]-1):
+        for j in range(i+1,X.shape[0]):
+            ci=hash_code[i,:]
+            cj=hash_code[j,:]
+            sign_diff = np.where(ci != cj)[0]
+            pnl[i,j]=np.sum(np.abs(X[0, sign_diff]) + np.abs(X[0, sign_diff])) / np.sum(np.abs(X[0, :]) + np.abs(X[0, :]))
+            pnl[j,i]=pnl[i,j]
+    return pnl
 
 if __name__ == '__main__':
     random.seed(10)
@@ -125,7 +118,7 @@ if __name__ == '__main__':
     m, names = get_Tokens(newsgroups_train.data[:300])
     print(m.shape)
 
-    STSZ = m.shape[0] ##d accord paper
+    STSZ = 300 ##d accord paper
     NRBLK =60 ##b accord paper
     BLKSZ = STSZ // NRBLK ##r accord paper
     nrHshTbls = NRBLK
@@ -164,11 +157,13 @@ if __name__ == '__main__':
             for i in hshTbl_blk[e]:
                 for o in hshTbl_blk[e]:
                     collision[i - 1][o - 1] += 1
-    hamming = np.cos((np.pi / 2) * (1 - collision * 1 / 60))
-    pldHaming,suma=penalizedHcc(m_new2)
+    pldHaming=penalizedHcc(m_new2)
+    simcos = np.cos((np.pi / 2) * (1 - pldHaming))
     print("End!")
-
-
+simcos
+pldHaming.shape
+np.sign(m_new2)
+boolean(m_new2)
 if __name__ == '__main__2':
     file_name = "eswa-paper-text-data.zip"
 
