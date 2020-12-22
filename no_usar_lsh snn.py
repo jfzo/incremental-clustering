@@ -9,6 +9,7 @@ from sklearn import random_projection
 import mmh3
 from zipfile import ZipFile
 
+
 def get_Tokens(x):
     vectorizer = CountVectorizer(analyzer="word",ngram_range=(1,1))
     return (vectorizer.fit_transform(x).toarray(), vectorizer.get_feature_names())
@@ -116,6 +117,8 @@ def hmmg(X):
             hammin[i,j]=hamming(hashcode[i],hashcode[j])
             hammin[j,i]=hammin[i,j]
     return hammin
+
+
 if __name__ == '__main__':
     random.seed(10)
     newsgroups_train = fetch_20newsgroups(subset='train',
@@ -180,8 +183,8 @@ if __name__ == '__main__2':
     data='text-data/DOE_out.dat'
 
     X=sparseMatFromCluto(data)
-1-pldHaming
-1-pldHaming[0]
-hamming(m_new2,m_new2)
 
-hmmg(m_new2)
+    #1-pldHaming
+    #1-pldHaming[0]
+    #hamming(m_new2,m_new2)
+    #hmmg(m_new2)
