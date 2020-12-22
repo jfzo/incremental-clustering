@@ -1,6 +1,7 @@
 
 import numpy as np
 import pandas as pd
+from scipy.spatial.distance import hamming
 import random
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.datasets import fetch_20newsgroups
@@ -107,6 +108,14 @@ def penalizedHcc(X):
             pnl[j,i]=pnl[i,j]
     return pnl
 
+def hmmg(X):
+    hashcode=np.sign(X)
+    hammin = np.zeros((X.shape[0], X.shape[0]))  # penalized hamming(Ci,Cj)
+    for i in range(X.shape[0] - 1):
+        for j in range(i + 1, X.shape[0]):
+            hammin[i,j]=hamming(hashcode[i],hashcode[j])
+            hammin[j,i]=hammin[i,j]
+    return hammin
 if __name__ == '__main__':
     random.seed(10)
     newsgroups_train = fetch_20newsgroups(subset='train',
@@ -115,12 +124,12 @@ if __name__ == '__main__':
                                         'rec.sport.baseball','rec.motorcycles','talk.politics.mideast'])
 
     # matrix and column labels
-    m, names = get_Tokens(newsgroups_train.data[:300])
+    m, names = get_Tokens(newsgroups_train.data[:int(input("introducir cantidad de textos"))])
     print(m.shape)
 
-    STSZ = 300 ##d accord paper
-    NRBLK =60 ##b accord paper
-    BLKSZ = STSZ // NRBLK ##r accord paper
+    STSZ = int(input("introducir cantidad de proyecciones")) ##d accord paper
+    NRBLK =int(input("introducir cantidad de bandas")) ##b accord paper
+    BLKSZ = int(input("introducir largo del bucket")) ##r accord paper
     nrHshTbls = NRBLK
     s=(1/NRBLK)**(1/BLKSZ)
     MAXBKTS = (2**31) - 1 # very large prime num.
@@ -158,12 +167,10 @@ if __name__ == '__main__':
                 for o in hshTbl_blk[e]:
                     collision[i - 1][o - 1] += 1
     pldHaming=penalizedHcc(m_new2)
-    simcos = np.cos((np.pi / 2) * (1 - pldHaming))
+    simcos=(np.pi / 2) * (1 - hmmg(m_new2))
+    simcospenalized =(np.pi / 2) * (1 - pldHaming)
     print("End!")
-simcos
-pldHaming.shape
-np.sign(m_new2)
-boolean(m_new2)
+
 if __name__ == '__main__2':
     file_name = "eswa-paper-text-data.zip"
 
@@ -173,14 +180,8 @@ if __name__ == '__main__2':
     data='text-data/DOE_out.dat'
 
     X=sparseMatFromCluto(data)
-    X.shape
+1-pldHaming
+1-pldHaming[0]
+hamming(m_new2,m_new2)
 
-    b=boolean(rndVecs)
-    h,DOC=hashvec(j,b,m)
-    h=h.transpose()
-    h.shape
-    inner=np.dot(DOC,h)
-    inner
-    hcode=boolean(inner)
-    hcode
-    DOC
+hmmg(m_new2)
