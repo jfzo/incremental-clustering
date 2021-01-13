@@ -52,7 +52,7 @@ class HashingBasedIndex:
         self.random_hyperplanes = np.random.randn(input_dim, self.signature_len)  # random hyperplanes
         self.total_docs = 0
 
-    def index_collection(self, docterm):
+    def index_collection_old(self, docterm):
         corpusSz = docterm.shape[0]
         rndProjs = docterm.dot(self.random_hyperplanes)  # projected matrix of size corpusSz x
 
@@ -83,6 +83,10 @@ class HashingBasedIndex:
             hshTbl_blk[docHashVal].add(doc_id)
         self.total_docs += 1
 
+    def index_collection(self, docterm):
+        corpusSz = docterm.shape[0]
+        for i in range(corpusSz):
+            self.index_document(docterm[i, :])
 
 def simhash_estimate(index: HashingBasedIndex):
     # collisions = sp.lil_matrix((index.total_docs, index.total_docs))

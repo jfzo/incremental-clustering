@@ -4,11 +4,12 @@ import numpy as np
 from logging_utils import get_ilshlogger
 
 
+
 def test():
     from ilshclus import load_index
     from ilshclus import simhash_estimate
     log = get_ilshlogger()
-    ix = load_index('./hash_index_20newsgroup-small.bin')
+    ix = load_index('./hash_index_20newsgroup-small.bin')  ##'./hash_index_DOE.data' "se cambia según el texto"
     #ix.total_docs
     #ix.input_dim
     #ix.nr_of_bands
@@ -43,10 +44,10 @@ def index_small_20ng():
     corpusVectors = txtcol.getSmall20ngCorpusData()
 
     # matrix and column labels
-    docterm, features = ic.get_vectors(corpusVectors, max_features=3000)
+    docterm, features = ic.get_vectors(corpusVectors)
 
     log.debug("Indexing collection")
-    outputpath = './hash_index_20newsgroup-small.bin'
+    outputpath = './hash_index_20newsgroup-small.bin'##'./hash_index_DOE.data'
     hI = ic.HashingBasedIndex(len(features), nr_of_bands=5, band_length=3)
     hI.index_collection(docterm)
 
@@ -54,6 +55,23 @@ def index_small_20ng():
     ic.save_index(hI, outputpath)
     log.debug("Index written into {0}.".format(outputpath))
 
-if __name__ == '__main__':
-    test()
+def index_text_data():
+    log = get_ilshlogger()
+    log.debug("Fetching corpus...")
+    ###matrix
+    data = 'text-data/DOE_out.dat'##o cualquier otro texto que haya
+    text_data = txtcol.sparseMatFromCluto(data)
 
+
+    log.debug("Indexing collection")
+    outputpath = './hash_index_DOE.data'
+    hI = ic.HashingBasedIndex(text_data.shape[1], nr_of_bands=5, band_length=3)
+    hI.index_collection(text_data)
+
+    log.debug("Saving index to disk...")
+    ic.save_index(hI, outputpath)
+    log.debug("Index written into {0}.".format(outputpath))
+
+
+if __name__ == '__main__':
+    index_text_data()

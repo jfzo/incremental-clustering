@@ -20,5 +20,31 @@ def getSmall20ngCorpusData():
     newsgroups_train = fetch_20newsgroups(subset='train',
                                           remove=('footers', 'quotes'),
                                           categories=['sci.space', 'comp.graphics', 'rec.sport.baseball'])
-    return newsgroups_train.data[:10]
+    return newsgroups_train.data[:1000]
+def sparseMatFromCluto(inputfile, sparseFmt = False):
+    from scipy.sparse import csr_matrix, lil_matrix, coo_matrix
+    import numpy as np
+
+    in_fm = open(inputfile)
+    N, D, _ = map(int, in_fm.readline().strip().split())  # Number of instances, Number of dimensions and NNZ
+
+    X = lil_matrix((N, D))
+    ln_no = 0
+    for L in in_fm:
+        inst_fields = L.strip().split(" ")
+        for i in range(0, len(inst_fields), 2):
+            feat = int(inst_fields[i]) - 1  # cluto starts column indexes at 1
+            feat_val = float(inst_fields[i + 1])
+            X[ln_no, feat] = feat_val
+
+        ln_no += 1
+
+    in_fm.close()
+
+    assert (ln_no == N)
+    if sparseFmt:
+        return csr_matrix(X)
+    #np.savetxt(csv_fname, X.todense(), delimiter=" ")
+    return X.todense()
+
 
