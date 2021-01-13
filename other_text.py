@@ -68,3 +68,7 @@ def otherdata():
 
 if __name__=="__main__":
     test()
+y= ic.HashingBasedIndex(x.shape[1], nr_of_bands=10, band_length=2)
+y.index_collection(x)
+S=simhash_estimate(y)
+S[0,166]
