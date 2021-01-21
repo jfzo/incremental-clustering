@@ -1,4 +1,5 @@
 from sklearn.datasets import fetch_20newsgroups
+import numpy as np
 
 def get20ngCorpusData():
     """
@@ -47,4 +48,32 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
     #np.savetxt(csv_fname, X.todense(), delimiter=" ")
     return X.todense()
 
+def get_corpus_AP():
+    text_data = sparseMatFromCluto('text-data/AP_out.dat')
+    labels=np.loadtxt("text-data/AP_out.dat.labels")
+    return  text_data,labels
 
+def get_corpus_DOE():
+    text_data = sparseMatFromCluto('text-data/DOE_out.dat')
+    labels=np.loadtxt("text-data/DOE_out.dat.labels")
+    return  text_data,labels
+
+def get_corpus_FR():
+    text_data = sparseMatFromCluto('text-data/FR_out.dat')
+    labels=np.loadtxt("text-data/FR_out.dat.labels")
+    return  text_data,labels
+
+def get_corpus_SJMN():
+    text_data = sparseMatFromCluto('text-data/SJMN_out.dat')
+    labels=np.loadtxt("text-data/SJMN_out.dat.labels")
+    return  text_data,labels
+
+def get_corpus_WSJ():
+    text_data = sparseMatFromCluto('text-data/WSJ_out.dat')
+    labels=np.loadtxt("text-data/WSJ_out.dat.labels")
+    return  text_data,labels
+
+def get_corpus_ZF():
+    text_data = sparseMatFromCluto('text-data/ZF_out.dat')
+    labels=np.loadtxt("text-data/ZF_out.dat.labels")
+    return  text_data,labels
