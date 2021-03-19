@@ -9,14 +9,15 @@ def test1():
     from ilshclus import load_index
     from ilshclus import simhash_estimate
     log = get_ilshlogger()
-    log.debug("working with DOE data...")
-    ix = load_index('./hash_index_DOE.data')
+    log.debug("working with 20newsgroup data...")
+    ix = load_index('./hash_index_20newsgroup-small.bin')
     #ix.total_docs
     #ix.input_dim
     #ix.nr_of_bands
     #ix.band_size
 
     S = simhash_estimate(ix)
+    txtcol.sparse_mat_to_cluto_graph(S,"20newsgtest_est{0}_{1}_sim.dat".format(ix.nr_of_bands,ix.band_size))
     # some example docs.
     for i,j in [(0, 1),
         (0, 2),
@@ -45,6 +46,7 @@ def test2():
     #ix.band_size
 
     S = simhash_estimate(ix)
+
     # some example docs.
     for i,j in [(0, 1),
         (0, 2),
@@ -62,105 +64,5 @@ def test2():
         log.debug("Thus, cos(0.5*pi*(1-{0})) = {1}".format(match_prop, np.cos((np.pi / 2) * (1 - match_prop) ) ) )
     log.debug("test finished!")
 
-def index_small_20ng():
-    """
-    10 documents are indexed for testing purposes.
-    :return: NOne
-    """
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    # corpusVectors = txtcol.get20ngCorpusData()
-    corpusVectors = txtcol.getSmall20ngCorpusData()
-
-    # matrix and column labels
-    docterm, features = ic.get_vectors(corpusVectors)
-
-    log.debug("Indexing collection")
-    outputpath = './hash_index_20newsgroup-small.bin'
-    hI = ic.HashingBasedIndex(len(features), nr_of_bands=5, band_length=3)
-    hI.index_collection(docterm)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_AP():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms,labels=txtcol.get_corpus_AP()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_AP.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_DOE():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms, labels = txtcol.get_corpus_DOE()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_DOE.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_FR():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms, labels = txtcol.get_corpus_FR()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_FR.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_SJMN():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms, labels = txtcol.get_corpus_SJMN()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_SJMN.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_WSJ():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms, labels = txtcol.get_corpus_WSJ()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_WSJ.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-def index_text_data_ZF():
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-    docterms, labels = txtcol.get_corpus_ZF()
-    log.debug("Indexing collection")
-    outputpath = './hash_index_ZF.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=5, band_length=3)
-    hI.index_collection(docterms)
-
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
 if __name__ == '__main__':
     test1()
-    test2()

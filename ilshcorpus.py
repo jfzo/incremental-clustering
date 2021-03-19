@@ -1,3 +1,4 @@
+from scipy.sparse import csr_matrix
 from sklearn.datasets import fetch_20newsgroups
 import numpy as np
 
@@ -21,7 +22,7 @@ def getSmall20ngCorpusData():
     newsgroups_train = fetch_20newsgroups(subset='train',
                                           remove=('footers', 'quotes'),
                                           categories=['sci.space', 'comp.graphics', 'rec.sport.baseball'])
-    return newsgroups_train.data[:1000]
+    return newsgroups_train.data
 def sparseMatFromCluto(inputfile, sparseFmt = False):
     from scipy.sparse import csr_matrix, lil_matrix, coo_matrix
     import numpy as np
@@ -47,6 +48,20 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
         return csr_matrix(X)
     #np.savetxt(csv_fname, X.todense(), delimiter=" ")
     return X.todense()
+
+def sparse_mat_to_cluto_graph(data, outputfile):
+    sp_data = csr_matrix(data)
+    N, d = sp_data.shape
+    out = open(outputfile, "w")
+    out.write("%d %d\n" % (N, sp_data.nnz))
+    for i in range(N):
+        non_zero_cols = sp_data[i, :].nonzero()[1]
+        for j in non_zero_cols:
+            feat = j + 1  # cluto's format starts at 1
+            value = sp_data[i, j]
+            out.write("%d %0.2f " % (feat, value))
+        out.write("\n")
+    out.close()
 
 def get_corpus_AP():
     text_data = sparseMatFromCluto('text-data/AP_out.dat')

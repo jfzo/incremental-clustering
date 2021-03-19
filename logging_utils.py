@@ -17,12 +17,19 @@ LOGGING_CONFIG = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'whenAndWhere'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'whenAndWhere',
+            'filename':'log/ilsh.log'
+
         }
     },
     'loggers': {
         'ilshsrc': { # 'root' logger
             'level': 'DEBUG', #CRITICAL will only print Errors
-            'handlers': ['console']
+            'handlers': ['console','file']
         }
     }
 }

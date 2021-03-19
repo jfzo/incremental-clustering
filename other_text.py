@@ -27,15 +27,17 @@ def sparseMatFromCluto(inputfile, sparseFmt = False):
         return csr_matrix(X)
     #np.savetxt(csv_fname, X.todense(), delimiter=" ")
     return X.todense()
-data ='text-data/DOE_out.dat'
-x=sparseMatFromCluto(data)
-x.shape[1]
+#data ='text-data/DOE_out.dat'
+#x=sparseMatFromCluto(data)
+#x.shape[1]
 def test():
     from ilshclus import load_index
     from ilshclus import simhash_estimate
     log = get_ilshlogger()
+    log.debug("cargando el indice...")
     ix = load_index('./hash_index_DOE.data')
-    #ix.total_docs
+    log.debug("indice cargado")
+    log.debug(ix.total_docs)
     #ix.input_dim
     #ix.nr_of_bands
     #ix.band_size
@@ -68,7 +70,3 @@ def otherdata():
 
 if __name__=="__main__":
     test()
-y= ic.HashingBasedIndex(x.shape[1], nr_of_bands=10, band_length=2)
-y.index_collection(x)
-S=simhash_estimate(y)
-S[0,166]
