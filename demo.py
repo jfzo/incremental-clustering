@@ -2,6 +2,8 @@ import ilshclus as ic
 import ilshcorpus as txtcol
 import numpy as np
 from logging_utils import get_ilshlogger
+from ilshclus import load_index
+from ilshclus import simhash_estimate
 
 
 
@@ -34,6 +36,7 @@ def test1():
         log.debug("Proportion of matches in the index was {0}".format(match_prop))
         log.debug("Thus, cos(0.5*pi*(1-{0})) = {1}".format(match_prop, np.cos((np.pi / 2) * (1 - match_prop) ) ) )
     log.debug("test finished!")
+
 def test2():
     from ilshclus import load_index
     from ilshclus import simhash_estimate
@@ -64,16 +67,25 @@ def test2():
         log.debug("Thus, cos(0.5*pi*(1-{0})) = {1}".format(match_prop, np.cos((np.pi / 2) * (1 - match_prop) ) ) )
     log.debug("test finished!")
 
-def index_to_cluto():
-    from ilshclus import load_index
-    from ilshclus import simhash_estimate
-    log = get_ilshlogger()
-    log.debug("loading index data...")
-    x=load_index('./hash_index_SJMN_b500r1.data')
-    log.debug("calculating similarity...")
-    xi=simhash_estimate(x)
-    txtcol.sparse_mat_to_cluto_graph(data=xi,outputfile="clutohash_index_SJMN_b500r1.data")
-    log.debug("cluto matrix done...")
+def index_to_cluto(index_file, output_mat):
+	log = get_ilshlogger()
+
+	log.debug("loading index {0}...".format(index_file))
+	x = load_index(index_file)
+
+	log.debug("calculating similarity...")
+	xi = simhash_estimate(x)
+	
+	log.debug("storing sparse distance mat to {0}...")
+	txtcol.sparse_mat_to_cluto_graph(data=xi,outputfile=output_mat)
+	log.debug("cluto matrix done...")
 
 if __name__ == '__main__':
-    index_to_cluto()
+	# file paths
+	index_path = '/home/cnunez/incremental-clustering/hash_index_datos'
+	out_path = './incremental-clustering-out'
+
+	index_to_cluto(
+	'{0}/hash_index_SJMN_b500r1.data'.format(index_path),
+	'{0}/clutohash_index_SJMN_b500r1.data'.format(out_path)
+	)
