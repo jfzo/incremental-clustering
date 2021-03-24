@@ -76,7 +76,7 @@ def index_to_cluto(index_file, output_mat):
 	log.debug("calculating similarity...")
 	xi = simhash_estimate(x)
 	
-	log.debug("storing sparse distance mat to {0}...")
+	log.debug("storing sparse distance mat to {0}...".format(output_mat))
 	txtcol.sparse_mat_to_cluto_graph(data=xi,outputfile=output_mat)
 	log.debug("cluto matrix done...")
 
