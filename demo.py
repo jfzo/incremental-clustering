@@ -64,5 +64,16 @@ def test2():
         log.debug("Thus, cos(0.5*pi*(1-{0})) = {1}".format(match_prop, np.cos((np.pi / 2) * (1 - match_prop) ) ) )
     log.debug("test finished!")
 
+def index_to_cluto():
+    from ilshclus import load_index
+    from ilshclus import simhash_estimate
+    log = get_ilshlogger()
+    log.debug("loading index data...")
+    x=load_index('./hash_index_SJMN_b500r1.data')
+    log.debug("calculating similarity...")
+    xi=simhash_estimate(x)
+    txtcol.sparse_mat_to_cluto_graph(data=xi,outputfile="clutohash_index_SJMN_b500r1.data")
+    log.debug("cluto matrix done...")
+
 if __name__ == '__main__':
-    test1()
+    index_to_cluto()
