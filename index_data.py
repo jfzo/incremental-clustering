@@ -1,3 +1,11 @@
+import numpy as np
+from logging_utils import get_ilshlogger
+import ilshclus as ic
+import ilshcorpus as txtcol
+
+
+
+
 def index_small_20ng():
     """
     10 documents are indexed for testing purposes.
@@ -91,15 +99,41 @@ def index_text_data_WSJ():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_ZF():
+def index_text_data_ZF(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_ZF()
     log.debug("Indexing collection")
-    outputpath = './hash_index_ZF.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = '{0}/hash_index_ZF_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
     ic.save_index(hI, outputpath)
     log.debug("Index written into {0}.".format(outputpath))
+
+
+if __name__ == '__main__':
+    #import sys
+    #print("Name of the script      : {0}".format(sys.argv[0]))
+    #print("1st Argument of the script      : {0}".format(sys.argv[1]))
+    #print("2nd Argument of the script      : {0}".format(sys.argv[2]))
+    #print("3rd Argument of the script      : {0}".format(sys.argv[3]))
+
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('-b', '--nbands', type=int, help='Cantidad de bandas', required=True)
+    parser.add_argument('-r', '--bandsz', type=int, help='Tamaño de cada banda', required=True)
+    parser.add_argument('-d', '--dataset', type=str, help='Conjunto de datos a usar (ZF, AP, DOE, SJMN)', required=True)
+    parser.add_argument('-o', '--outdir', type=str, default='.', help='Directorio donde se almacenará el indice')
+    args = parser.parse_args()
+    #print(args)
+    print("Cantidad de bandas:{0}".format(args.nbands))
+    print("Tamaño de cada banda:{0}".format(args.bandsz))
+    print("Dataset:{0}".format(args.dataset))
+    print("Output directory:{0}".format(args.outdir))
+
+    if args.dataset == 'ZF':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+

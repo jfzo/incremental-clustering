@@ -81,11 +81,71 @@ def index_to_cluto(index_file, output_mat):
 	log.debug("cluto matrix done...")
 
 if __name__ == '__main__':
+	import glob
+	import os
+	log = get_ilshlogger()
 	# file paths
 	index_path = '/home/cnunez/incremental-clustering/hash_index_datos'
 	out_path = './incremental-clustering-out'
 
-	index_to_cluto(
-	'{0}/hash_index_SJMN_b500r1.data'.format(index_path),
-	'{0}/clutohash_index_SJMN_b500r1.data'.format(out_path)
-	)
+	indexLst = {
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ_b1000r3.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP_b1000r3.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF_b1000r3.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR_b1000r3.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ_b500r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP_b500r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN_b1000r3.data':False, # processed
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF_b500r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR_b500r2.data':False, # processed
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_WSJ_b500r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE_b1000r3.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_AP_b500r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN.data':False, # processed
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE_b1000r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b1000r3.bin':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_ZF_b500r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_FR_b500r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN_b500r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b1000r2.bin':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE_b1000r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE_b500r2.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b500r3.bin':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_SJMN_b500r1.data':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b1000r1.bin':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b500r2.bin':False,
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_DOE_b500r1.data':False, # processed
+	'/home/cnunez/incremental-clustering/hash_index_datos/hash_index_20newsgroup-small_b500r1.bin':False,
+	'./indices/hash_index_ZF_b200r5.data':True
+	}
+
+	#indexLst = glob.glob('{0}/*.data'.format(index_path))
+	for fpath, is_available in indexLst.items():
+		# os.path.basename(fpath)
+		# os.path.dirname(fpath) 
+
+		#log.debug('IN {0}'.format(fpath))
+		#log.debug('OUT {0}/clutomat_{1}.dat'.format(out_path, os.path.basename(fpath)) )
+		if is_available:
+			index_to_cluto(
+			'{0}'.format(fpath),
+			'{0}/clutomat_{1}.dat'.format(out_path, os.path.basename(fpath))
+			)
+
+
+		
