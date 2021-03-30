@@ -6,7 +6,7 @@ import ilshcorpus as txtcol
 
 
 
-def index_small_20ng():
+def index_small_20ng(nr_of_bands=500, band_length=5, outputdir='.'):
     """
     10 documents are indexed for testing purposes.
     :return: NOne
@@ -20,8 +20,8 @@ def index_small_20ng():
     docterm, features = ic.get_vectors(corpusVectors)
 
     log.debug("Indexing collection")
-    outputpath = './hash_index_20newsgroup-small.bin'
-    hI = ic.HashingBasedIndex(len(features), nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_20newsgroup-small_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(len(features), nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterm)
 
     log.debug("Saving index to disk...")
@@ -29,13 +29,13 @@ def index_small_20ng():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_AP():
+def index_text_data_AP(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_AP()
     log.debug("Indexing collection")
-    outputpath = './hash_index_AP.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_AP_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
@@ -43,13 +43,13 @@ def index_text_data_AP():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_DOE():
+def index_text_data_DOE(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_DOE()
     log.debug("Indexing collection")
-    outputpath = './hash_index_DOE.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_DOE_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
@@ -57,13 +57,13 @@ def index_text_data_DOE():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_FR():
+def index_text_data_FR(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_FR()
     log.debug("Indexing collection")
-    outputpath = './hash_index_FR.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_FR_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
@@ -71,13 +71,13 @@ def index_text_data_FR():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_SJMN():
+def index_text_data_SJMN(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_SJMN()
     log.debug("Indexing collection")
-    outputpath = './hash_index_SJMN.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_SJMN_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)'
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
@@ -85,13 +85,13 @@ def index_text_data_SJMN():
     log.debug("Index written into {0}.".format(outputpath))
 
 
-def index_text_data_WSJ():
+def index_text_data_WSJ(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_WSJ()
     log.debug("Indexing collection")
-    outputpath = './hash_index_WSJ.data'
-    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=500, band_length=3)
+    outputpath = './hash_index_WSJ_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)
+    hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
     log.debug("Saving index to disk...")
@@ -137,3 +137,20 @@ if __name__ == '__main__':
     if args.dataset == 'ZF':
         index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
 
+    if args.dataset == '20ng':
+        index_small_20ng(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+
+    if args.dataset == 'DOE':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+
+    if args.dataset == 'WSJ':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+
+    if args.dataset == 'AP':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+
+    if args.dataset == 'FR':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
+
+    if args.dataset == 'SJMN':
+        index_text_data_ZF(nr_of_bands=args.nbands, band_length=args.bandsz, outputdir=args.outdir)
