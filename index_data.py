@@ -2,8 +2,8 @@ import numpy as np
 from logging_utils import get_ilshlogger
 import ilshclus as ic
 import ilshcorpus as txtcol
-
-
+from ilshcorpus import LabeledTextData
+import os
 
 
 def index_small_20ng(nr_of_bands=500, band_length=5, outputdir='.'):
@@ -29,6 +29,27 @@ def index_small_20ng(nr_of_bands=500, band_length=5, outputdir='.'):
     log.debug("Index written into {0}.".format(outputpath))
 
 
+
+def index_LabeledTextData(objTxtData:LabeledTextData, nr_of_bands=500,
+                         band_length=5, outputdir='.',
+                         outputfname='hash_index_generic.data'):
+    """
+    Creates the index for the given collection.
+    """
+    log = get_ilshlogger()
+    log.debug("Fetching corpus...")
+
+    outputpath = os.path.join(outputdir, '{0}_b{1}r{2}.data'.format(outputfname, nr_of_bands, band_length))
+    log.debug("Indexing collection into {0}".format(outputpath))
+
+    hI = ic.HashingBasedIndex(objTxtData.docterm.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
+    hI.index_collection(objTxtData.docterm)
+    log.debug("Saving index to disk...")
+    ic.save_index(hI, outputpath)
+    log.debug("Index written into {0}.".format(outputpath))
+
+
+###########################################################################
 def index_text_data_AP(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
@@ -76,7 +97,7 @@ def index_text_data_SJMN(nr_of_bands=500, band_length=5, outputdir='.'):
     log.debug("Fetching corpus...")
     docterms, labels = txtcol.get_corpus_SJMN()
     log.debug("Indexing collection")
-    outputpath = './hash_index_SJMN_b{1}r{2}.data'.format(outputdir, nr_of_bands, band_length)'
+    outputpath = os.path.join(outputdir, 'hash_index_SJMN_b{0}r{1}.data'.format(nr_of_bands, band_length))
     hI = ic.HashingBasedIndex(docterms.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
     hI.index_collection(docterms)
 
