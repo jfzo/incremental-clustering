@@ -1,35 +1,11 @@
+from enum import Enum, auto
 from scipy.sparse import csr_matrix
 from sklearn.datasets import fetch_20newsgroups
 import numpy as np
 import os
-
 from abc import ABC, abstractmethod, ABCMeta
 
 
-
-
-
-def get20ngCorpusData():
-    """
-    Fetches returns a list with the documents as items.
-    :return: a list with the texts (one per item)
-    """
-    newsgroups_train = fetch_20newsgroups(subset='train',
-                                          remove=('headers', 'footers', 'quotes'),
-                                          categories=['sci.space', 'comp.graphics',
-                                                      'rec.sport.baseball', 'rec.motorcycles', 'talk.politics.mideast'])
-    return newsgroups_train.data
-
-
-def getSmall20ngCorpusData():
-    """
-    Fetches returns a list with the documents as items.
-    :return: a list with the texts (one per item)
-    """
-    newsgroups_train = fetch_20newsgroups(subset='train',
-                                          remove=('footers', 'quotes'),
-                                          categories=['sci.space', 'comp.graphics', 'rec.sport.baseball'])
-    return newsgroups_train.data
 
 def sparseMatFromCluto(inputfile, sparseFmt = False):
     from scipy.sparse import csr_matrix, lil_matrix, coo_matrix
@@ -71,6 +47,18 @@ def sparse_mat_to_cluto_graph(data, outputfile):
         out.write("\n")
     out.close()
 
+
+
+class AvailableCollections(Enum):
+    AP   = auto()
+    DOE  = auto()
+    FR   = auto()
+    SJMN = auto()
+    WSJ  = auto()
+    ZF   = auto()
+
+
+
 class LabeledTextData(metaclass = ABCMeta):
     @abstractmethod
     def __init__(self, **args): # must be implemented with the operations to read or load the dataset
@@ -91,6 +79,7 @@ class LabeledTextData(metaclass = ABCMeta):
     @docterm.setter
     def docterm(self, mat):
         pass
+
 
 
 
@@ -154,7 +143,31 @@ class ZFData(LabeledTextData):
         self._labels = np.loadtxt(os.path.join(basedir, 'ZF_out.dat.labels'))
 
 
-###########################################
+########################################### DELETE below
+
+
+def get20ngCorpusData():
+    """
+    Fetches returns a list with the documents as items.
+    :return: a list with the texts (one per item)
+    """
+    newsgroups_train = fetch_20newsgroups(subset='train',
+                                          remove=('headers', 'footers', 'quotes'),
+                                          categories=['sci.space', 'comp.graphics',
+                                                      'rec.sport.baseball', 'rec.motorcycles', 'talk.politics.mideast'])
+    return newsgroups_train.data
+
+
+def getSmall20ngCorpusData():
+    """
+    Fetches returns a list with the documents as items.
+    :return: a list with the texts (one per item)
+    """
+    newsgroups_train = fetch_20newsgroups(subset='train',
+                                          remove=('footers', 'quotes'),
+                                          categories=['sci.space', 'comp.graphics', 'rec.sport.baseball'])
+    return newsgroups_train.data
+
 def get_corpus_AP():
     text_data = sparseMatFromCluto('text-data/AP_out.dat')
     labels=np.loadtxt("text-data/AP_out.dat.labels")

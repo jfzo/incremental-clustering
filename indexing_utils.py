@@ -6,6 +6,32 @@ from ilshcorpus import LabeledTextData
 import os
 
 
+
+
+def build_ilsh_index(objTxtData:LabeledTextData,
+                     nr_of_bands=500, band_length=5,
+                     outputdir='.',
+                     outputfname=None):
+    """
+    Creates the index for a given LabeledTextData object.
+    """
+    log = get_ilshlogger()
+    hI = ic.HashingBasedIndex(objTxtData.docterm.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
+    hI.index_collection(objTxtData.docterm)
+
+    if not outputfname is None:
+        outputpath = os.path.join(outputdir, '{0}_b{1}r{2}.data'.format(outputfname, nr_of_bands, band_length))
+        log.debug("Indexing collection into {0}".format(outputpath))
+        log.debug("Saving index to disk...")
+        ic.save_index(hI, outputpath)
+        log.debug("Index written into {0}.".format(outputpath))
+
+    return hI
+
+
+########################################################################### DELETE below
+
+
 def index_small_20ng(nr_of_bands=500, band_length=5, outputdir='.'):
     """
     10 documents are indexed for testing purposes.
@@ -30,26 +56,6 @@ def index_small_20ng(nr_of_bands=500, band_length=5, outputdir='.'):
 
 
 
-def index_LabeledTextData(objTxtData:LabeledTextData, nr_of_bands=500,
-                         band_length=5, outputdir='.',
-                         outputfname='hash_index_generic.data'):
-    """
-    Creates the index for the given collection.
-    """
-    log = get_ilshlogger()
-    log.debug("Fetching corpus...")
-
-    outputpath = os.path.join(outputdir, '{0}_b{1}r{2}.data'.format(outputfname, nr_of_bands, band_length))
-    log.debug("Indexing collection into {0}".format(outputpath))
-
-    hI = ic.HashingBasedIndex(objTxtData.docterm.shape[1], nr_of_bands=nr_of_bands, band_length=band_length)
-    hI.index_collection(objTxtData.docterm)
-    log.debug("Saving index to disk...")
-    ic.save_index(hI, outputpath)
-    log.debug("Index written into {0}.".format(outputpath))
-
-
-###########################################################################
 def index_text_data_AP(nr_of_bands=500, band_length=5, outputdir='.'):
     log = get_ilshlogger()
     log.debug("Fetching corpus...")
