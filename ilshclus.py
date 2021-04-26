@@ -72,7 +72,7 @@ class HashingBasedIndex:
     def index_document(self, docvec):
         rndProjs = docvec.dot(self.random_hyperplanes)  # projected matrix of size corpusSz x
         doc_id = self.total_docs
-        docSgt = np.array(rndProjs >= 0, dtype=np.int)
+        docSgt = np.array(rndProjs >= 0, dtype=np.int).reshape(-1)
         for blk in range(self.nr_of_bands):
             # (blk*BLKSZ):((blk+1)*BLKSZ)
             blkData = docSgt[(blk * self.band_size):((blk + 1) * self.band_size)]
@@ -88,7 +88,20 @@ class HashingBasedIndex:
         for i in range(corpusSz):
             self.index_document(docterm[i, :])
 
-def simhash_estimate(index: HashingBasedIndex):
+
+def compute_index_properties(index: HashingBasedIndex):
+    ave_nonempty_buckets = 0
+    ave_items_inbucket = 0
+    for table in index.Index:  # table is a Dict
+        ave_nonempty_buckets += len(table)
+        n_items_inbucket = 0
+        for bucket in table.values():
+            n_items_inbucket += len(bucket)
+        ave_items_inbucket += n_items_inbucket /len(table)
+    return {'ave-nonempty-buckets':ave_nonempty_buckets/index.num_tables, 'ave-contained-items':ave_items_inbucket/index.num_tables}
+
+
+def simhash_estimate(index: HashingBasedIndex) -> sp.csr_matrix :
     # collisions = sp.lil_matrix((index.total_docs, index.total_docs))
     # list(combinations([1, 3, 7], 2))
     # collision = np.zeros((m.shape[0], m.shape[0]), dtype=np.int)
@@ -98,6 +111,7 @@ def simhash_estimate(index: HashingBasedIndex):
             collisions.extend(combinations(bucket, 2)) # all pairs of items in the same bucket are stored.
 
     matches = sp.lil_matrix((index.total_docs, index.total_docs))
+
     for di, dj in collisions: # each pair is visited to update the collision counter
         matches[di, dj] += 1 / index.num_tables
         matches[dj, di] = matches[di, dj]
